@@ -2,6 +2,11 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.util.Scanner;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -12,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -29,14 +35,16 @@ public class MainFrame extends JFrame implements ActionListener {
 			"AVERAGE", "GRADE" };
 	private DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
 	private JMenuBar menus;
-	private JMenu menuStudent, menuSort, menuFilter;
-	private JMenuItem mAdd, mRemove, mRemoveAll, mSortLastName, mSortId, mSortAverage, mFilter, mRemoveFilter;
+	private JMenu menuStudent, menuSort, menuFilter, menuExit;
+	private JMenuItem mAdd, mAddRandom, mRemove, mRemoveAll, mSortLastName, mSortId, mSortAverage, mFilter,
+			mRemoveFilter, mSave, mExit;
 
 	public MainFrame() {
 
 		stdList = new StudentsList();
 		chart = new Chart(stdList);
-		getTableData();
+		readData();
+		// getTableData();
 
 		setLayout(new BorderLayout());
 
@@ -50,9 +58,12 @@ public class MainFrame extends JFrame implements ActionListener {
 		menuStudent = new JMenu("Student");
 		menuSort = new JMenu("Sort");
 		menuFilter = new JMenu("Filter");
+		menuExit = new JMenu("Exit");
 
 		mAdd = new JMenuItem("Add student");
 		mAdd.addActionListener(this);
+		mAddRandom = new JMenuItem("Add random student");
+		mAddRandom.addActionListener(this);
 		mRemove = new JMenuItem("Remove student");
 		mRemove.addActionListener(this);
 		mRemoveAll = new JMenuItem("Remove all students");
@@ -67,8 +78,13 @@ public class MainFrame extends JFrame implements ActionListener {
 		mFilter.addActionListener(this);
 		mRemoveFilter = new JMenuItem("Remove filter");
 		mRemoveFilter.addActionListener(this);
+		mSave = new JMenuItem("Save data and exit");
+		mSave.addActionListener(this);
+		mExit = new JMenuItem("Exit without saving");
+		mExit.addActionListener(this);
 
 		menuStudent.add(mAdd);
+		menuStudent.add(mAddRandom);
 		menuStudent.add(mRemove);
 		menuStudent.add(mRemoveAll);
 		menuSort.add(mSortLastName);
@@ -76,10 +92,13 @@ public class MainFrame extends JFrame implements ActionListener {
 		menuSort.add(mSortAverage);
 		menuFilter.add(mFilter);
 		menuFilter.add(mRemoveFilter);
+		menuExit.add(mSave);
+		menuExit.add(mExit);
 
 		menus.add(menuStudent);
 		menus.add(menuSort);
 		menus.add(menuFilter);
+		menus.add(menuExit);
 
 		menuPanel.add(menus);
 		add(menuPanel, BorderLayout.NORTH);
@@ -102,10 +121,67 @@ public class MainFrame extends JFrame implements ActionListener {
 
 		add(tab);
 		setTitle("Grade Book");
-		setVisible(true);
-		setSize(1024, 800);
+
 		setResizable(false);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		setSize(1024, 800);
+		setVisible(true);
+	}
+
+	public void onExit() {
+		int exit = JOptionPane.showConfirmDialog(this, "Are you sure you want to exit without saving your data?",
+				"Exit", JOptionPane.YES_NO_OPTION);
+		if (exit == JOptionPane.YES_OPTION) {
+			System.exit(0);
+		}
+	}
+
+	public void readData() {
+		try {
+			Scanner s = new Scanner(new File("savedData.txt"));
+			while (s.hasNext()) {
+				Student st = new Student();
+				st.setFirstName(s.next());
+				st.setLastName(s.next());
+				st.setID(s.next());
+				st.setQuiz1(Double.parseDouble(s.next()));
+				st.setQuiz2(Double.parseDouble(s.next()));
+				st.setProject(Double.parseDouble(s.next()));
+				st.setMidterm(Double.parseDouble(s.next()));
+				st.setFinall(Double.parseDouble(s.next()));
+				st.setAverage(Double.parseDouble(s.next()));
+				st.setLetterGrade(s.next());
+				stdList.getList().add(st);
+
+			}
+			s.close();
+			getTableData();
+			chart.getInfo(stdList);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public void saveData() {
+		try {
+			PrintWriter wr = new PrintWriter(new FileOutputStream("savedData.txt"));
+			for (int i = 0; i < stdList.getList().size(); i++) {
+				wr.print(stdList.getList().get(i).getFirstName() + " ");
+				wr.print(stdList.getList().get(i).getLastName() + " ");
+				wr.print(stdList.getList().get(i).getID() + " ");
+				wr.print(stdList.getList().get(i).getQuiz1() + " ");
+				wr.print(stdList.getList().get(i).getQuiz2() + " ");
+				wr.print(stdList.getList().get(i).getProject() + " ");
+				wr.print(stdList.getList().get(i).getMidterm() + " ");
+				wr.print(stdList.getList().get(i).getFinall() + " ");
+				wr.print(stdList.getList().get(i).getAverage() + " ");
+				wr.print(stdList.getList().get(i).getLetterGrade() + " ");
+			}
+			wr.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 
 	}
 
@@ -139,31 +215,34 @@ public class MainFrame extends JFrame implements ActionListener {
 	 * 
 	 * @param letterGrade
 	 */
-	public void filter(String letterGrade) {
-		tableModel.setRowCount(0);
-		for (int i = 0; i < stdList.getList().size(); i++) {
-			if (stdList.getList().get(i).getLetterGrade().equals(letterGrade)) {
-				String firstName = stdList.getList().get(i).getFirstName();
-				String lastName = stdList.getList().get(i).getLastName();
-				String id = stdList.getList().get(i).getID();
-				double quiz1 = stdList.getList().get(i).getQuiz1();
-				double quiz2 = stdList.getList().get(i).getQuiz2();
-				double project = stdList.getList().get(i).getProject();
-				double midterm = stdList.getList().get(i).getMidterm();
-				double finall = stdList.getList().get(i).getFinall();
-				double avreage = stdList.getList().get(i).getAverage();
-				String letterGrades = stdList.getList().get(i).getLetterGrade();
-				Object[] data = { firstName, lastName, id, quiz1, quiz2, project, midterm, finall, avreage,
-						letterGrades };
+	public void filterGrade() {
+		String grade = JOptionPane.showInputDialog(this, "Which grade do you want to filter?");
+		if (grade != null) {
+			tableModel.setRowCount(0);
+			for (int i = 0; i < stdList.getList().size(); i++) {
+				if (stdList.getList().get(i).getLetterGrade().equalsIgnoreCase(grade)) {
+					String firstName = stdList.getList().get(i).getFirstName();
+					String lastName = stdList.getList().get(i).getLastName();
+					String id = stdList.getList().get(i).getID();
+					double quiz1 = stdList.getList().get(i).getQuiz1();
+					double quiz2 = stdList.getList().get(i).getQuiz2();
+					double project = stdList.getList().get(i).getProject();
+					double midterm = stdList.getList().get(i).getMidterm();
+					double finall = stdList.getList().get(i).getFinall();
+					double avreage = stdList.getList().get(i).getAverage();
+					String letterGrade = stdList.getList().get(i).getLetterGrade();
+					Object[] data = { firstName, lastName, id, quiz1, quiz2, project, midterm, finall, avreage,
+							letterGrade };
 
-				tableModel.addRow(data);
+					tableModel.addRow(data);
+				}
 			}
 		}
 	}
 
 	/**
 	 * deleteStudent: it will take a string which represent the id of a student it
-	 * will search in the array list for a student who have the same id and it will
+	 * will search in the array list for a student who has the same id and it will
 	 * delete it then it will return a message for telling the user that the student
 	 * is deleted, and if the id does not match any student's id so it will return a
 	 * message which say that there is no such student.
@@ -171,27 +250,95 @@ public class MainFrame extends JFrame implements ActionListener {
 	 * @param id
 	 * @return message
 	 */
-	public String deleteStudent(String id) {
-		String message = "No such student is found.";
-		for (int i = 0; i < stdList.getList().size(); i++) {
-			if (stdList.getList().get(i).getID().equals(id)) {
-				stdList.getList().remove(i);
-				tableModel.removeRow(i);
-				message = "Student is deleted.";
+	public void deleteStudent() {
+		String id = JOptionPane.showInputDialog(this, "Enter the ID of the student you want to remove from the list");
+		if (id != null) {
+			String message = "No such student was found.";
+			for (int i = 0; i < stdList.getList().size(); i++) {
+				if (stdList.getList().get(i).getID().equals(id)) {
+					stdList.getList().remove(i);
+					tableModel.removeRow(i);
+					message = "Student has been deleted.";
+					chart.getInfo(stdList);
+				}
 			}
+			JOptionPane.showMessageDialog(this, message);
 		}
-		return message;
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// ===============================
-		// Configure add menu //
-		// ===============================
+	public void clearAll() {
+		// clear the array list
+		stdList.getList().clear();
 
-		if (e.getSource().equals(mAdd)) {
-			String stringLimit = JOptionPane.showInputDialog(this, "Hom many students do you to add?");
+		// delete all the rows in the table
+		tableModel.setRowCount(0);
 
+		// update the chart:
+		chart.getInfo(stdList);
+
+		JOptionPane.showMessageDialog(this, "Student list has been cleared.");
+	}
+
+	public void addStudent() {
+		JTextField txtFirstName = new JTextField();
+		JTextField txtLastName = new JTextField();
+		JTextField txtID = new JTextField();
+		JTextField txtQuiz1 = new JTextField();
+		JTextField txtQuiz2 = new JTextField();
+		JTextField txtProject = new JTextField();
+		JTextField txtMidterm = new JTextField();
+		JTextField txtFinal = new JTextField();
+
+		Object[] message = { "First Name:", txtFirstName, "Last Name:", txtLastName, "ID:", txtID, "Quiz 1 Grade:", txtQuiz1,
+				"Quiz 2 Grade:", txtQuiz2, "Project Grade:", txtProject, "Midterm Grade:", txtMidterm, "Final Grade:", txtFinal, };
+
+		int option = JOptionPane.showConfirmDialog(this, message, "Enter all student's properties",
+				JOptionPane.OK_CANCEL_OPTION);
+
+		if (option == JOptionPane.OK_OPTION) {
+			String firstName = txtFirstName.getText();
+			String lastName = txtLastName.getText();
+			String id = txtID.getText();
+			String quiz1Grade = txtQuiz1.getText();
+			String quiz2Grade = txtQuiz2.getText();
+			String projectGrade = txtProject.getText();
+			String midtermGrade = txtMidterm.getText();
+			String finalGrade = txtFinal.getText();
+			if (firstName != null && lastName != null && id != null && quiz1Grade != null && quiz2Grade != null
+					&& projectGrade != null && midtermGrade != null && finalGrade != null) {
+				try {
+					double qu1 = Double.parseDouble(quiz1Grade);
+					double qu2 = Double.parseDouble(quiz2Grade);
+					double pro = Double.parseDouble(projectGrade);
+					double mid = Double.parseDouble(midtermGrade);
+					double fin = Double.parseDouble(finalGrade);
+
+					Student std = new Student(firstName, lastName, id, qu1, qu2, pro, mid, fin);
+
+					// Add student to the list
+					stdList.getList().add(std);
+
+					// get table data
+					tableModel.setRowCount(0);
+					getTableData();
+
+					// update chart info
+					chart.getInfo(stdList);
+
+					JOptionPane.showMessageDialog(this,
+							"Student has been added successfully. Total number of students is "
+									+ stdList.getList().size());
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(this, "An error ocurred. please try again.");
+				}
+			}
+		}
+	}
+
+	public void addRandomStudent() {
+		String stringLimit = JOptionPane.showInputDialog(this, "Hom many students do you to add?");
+
+		if (stringLimit != null) {
 			// convert the input string to integer
 			int limit = Integer.parseInt(stringLimit);
 
@@ -211,76 +358,59 @@ public class MainFrame extends JFrame implements ActionListener {
 			chart.getInfo(stdList);
 
 			JOptionPane.showMessageDialog(this,
-					limit + " students are added. Total number of students is " + stdList.getList().size());
+					limit + " students were added. Total number of students is " + stdList.getList().size());
+		}
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource().equals(mAdd)) {
+			addStudent();
 		}
 
-		// ===============================
-		// Configure remove menu //
-		// ===============================
+		else if (e.getSource().equals(mAddRandom)) {
+			addRandomStudent();
+		}
 
 		else if (e.getSource().equals(mRemove)) {
-			// get the id from user
-			String id = JOptionPane.showInputDialog(this,
-					"Enter the ID of the student you want to remove from the list");
-
-			// search for it and return the result:
-			JOptionPane.showMessageDialog(this, deleteStudent(id));
-
-			// update the chart:
-			chart.getInfo(stdList);
+			deleteStudent();
 		}
-
-		// ===============================
-		// Configure remove all menu //
-		// ===============================
 
 		else if (e.getSource().equals(mRemoveAll)) {
-			// clear the array list
-			stdList.getList().clear();
-
-			// delete all the rows in the table
-			tableModel.setRowCount(0);
-
-			// update the chart:
-			chart.getInfo(stdList);
-
-			JOptionPane.showMessageDialog(this, "Student list is cleared.");
+			clearAll();
 		}
 
-		/**
-		 * for sorting i use the method "toggleSortOrder" this method will sort a
-		 * specific column in ascending order by default, but if it is already sorted in
-		 * ascending it will sort it in descending order and vice versa.
-		 */
 		else if (e.getSource().equals(mSortLastName)) {
 			table.getRowSorter().toggleSortOrder(1);
-		} else if (e.getSource().equals(mSortId)) {
+		}
+
+		else if (e.getSource().equals(mSortId)) {
 			table.getRowSorter().toggleSortOrder(2);
-		} else if (e.getSource().equals(mSortAverage)) {
+		}
+
+		else if (e.getSource().equals(mSortAverage)) {
 			table.getRowSorter().toggleSortOrder(8);
 		}
 
-		// ===============================
-		// Configure filter menu //
-		// ===============================
-
 		else if (e.getSource().equals(mFilter)) {
-			String grade = JOptionPane.showInputDialog(this, "Which grade do you want to filter?");
-			// taking a string from the user and convert it to upper case
-			// because all the letter grades are in the upper case
-			filter(grade.toUpperCase());
+			filterGrade();
+		}
+
+		else if (e.getSource().equals(mRemoveFilter)) {
+			// delete rows from the table
+			tableModel.setRowCount(0);
+			// add all students which are in the students list to the table
+			getTableData();
 
 		}
 
-		// ===============================
-		// Configure remove filter menu//
-		// ===============================
+		else if (e.getSource().equals(mSave)) {
+			saveData();
+			System.exit(0);
+		}
 
 		else {
-			// delete rows from the table
-			tableModel.setRowCount(0);
-			// add all students in the array list to the table
-			getTableData();
+			onExit();
 		}
 	}
 

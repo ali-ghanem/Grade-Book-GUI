@@ -9,7 +9,7 @@ public class StudentsList {
 	private ArrayList<Student> studentsList = new ArrayList<Student>();
 
 	public StudentsList() {
-		readFile();
+		// readFile();
 	}
 
 	public ArrayList<Student> getList() {
@@ -39,7 +39,7 @@ public class StudentsList {
 
 	public String generateID() {
 		String id = generateNumber();
-		while (idExist(id) == true) {
+		while (idExist(id)) {
 			id = generateNumber();
 		}
 		return id;
@@ -114,8 +114,8 @@ public class StudentsList {
 	}
 
 	/**
-	 * readFile method for reading the "Student.txt" file then it will add the
-	 * students values to the array list.
+	 * readFile method for reading the "Student.txt" file which have 800 random
+	 * students informations then it will add the students values to the array list.
 	 */
 	public void readFile() {
 		try {
