@@ -1,8 +1,13 @@
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
+/**
+ * @author Ali Ghanem
+ *
+ */
 public class StudentsList {
 
 	Random rand = new Random();

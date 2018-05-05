@@ -4,6 +4,10 @@ import java.awt.Graphics;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+/**
+ * @author Ali Ghanem
+ *
+ */
 public class Chart extends JPanel {
 
 	// These variables represent the height of each rectangle:

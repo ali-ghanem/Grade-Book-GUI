@@ -22,6 +22,10 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+/**
+ * @author Ali Ghanem
+ *
+ */
 public class MainFrame extends JFrame implements ActionListener {
 
 	private StudentsList stdList;
@@ -30,7 +34,6 @@ public class MainFrame extends JFrame implements ActionListener {
 	private JPanel list, menuPanel;
 	private JScrollPane sc;
 	private JTable table;
-	// columnNames are the names of columns in the table
 	private String[] columnNames = { "NAME", "LAST NAME", "ID", "QUIZ1", "QUIZ2", "PROJECT", "MIDTERM", "FINAL",
 			"AVERAGE", "GRADE" };
 	private DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
@@ -185,10 +188,6 @@ public class MainFrame extends JFrame implements ActionListener {
 
 	}
 
-	/**
-	 * getData: it will take the values of each student from the array list then it
-	 * will add it to array for using it as a row in the table model
-	 */
 	public void getTableData() {
 		for (int i = 0; i < stdList.getList().size(); i++) {
 			String firstName = stdList.getList().get(i).getFirstName();
@@ -208,13 +207,6 @@ public class MainFrame extends JFrame implements ActionListener {
 
 	}
 
-	/**
-	 * filter: it will delete all the rows from the table then,it will take a string
-	 * (the input letter from the user) then it will search for the students who
-	 * have the same letter grade in the array list, and added to the table
-	 * 
-	 * @param letterGrade
-	 */
 	public void filterGrade() {
 		String grade = JOptionPane.showInputDialog(this, "Which grade do you want to filter?");
 		if (grade != null) {
@@ -240,16 +232,6 @@ public class MainFrame extends JFrame implements ActionListener {
 		}
 	}
 
-	/**
-	 * deleteStudent: it will take a string which represent the id of a student it
-	 * will search in the array list for a student who has the same id and it will
-	 * delete it then it will return a message for telling the user that the student
-	 * is deleted, and if the id does not match any student's id so it will return a
-	 * message which say that there is no such student.
-	 * 
-	 * @param id
-	 * @return message
-	 */
 	public void deleteStudent() {
 		String id = JOptionPane.showInputDialog(this, "Enter the ID of the student you want to remove from the list");
 		if (id != null) {
@@ -267,13 +249,10 @@ public class MainFrame extends JFrame implements ActionListener {
 	}
 
 	public void clearAll() {
-		// clear the array list
 		stdList.getList().clear();
 
-		// delete all the rows in the table
 		tableModel.setRowCount(0);
 
-		// update the chart:
 		chart.getInfo(stdList);
 
 		JOptionPane.showMessageDialog(this, "Student list has been cleared.");
@@ -289,8 +268,9 @@ public class MainFrame extends JFrame implements ActionListener {
 		JTextField txtMidterm = new JTextField();
 		JTextField txtFinal = new JTextField();
 
-		Object[] message = { "First Name:", txtFirstName, "Last Name:", txtLastName, "ID:", txtID, "Quiz 1 Grade:", txtQuiz1,
-				"Quiz 2 Grade:", txtQuiz2, "Project Grade:", txtProject, "Midterm Grade:", txtMidterm, "Final Grade:", txtFinal, };
+		Object[] message = { "First Name:", txtFirstName, "Last Name:", txtLastName, "ID:", txtID, "Quiz 1 Grade:",
+				txtQuiz1, "Quiz 2 Grade:", txtQuiz2, "Project Grade:", txtProject, "Midterm Grade:", txtMidterm,
+				"Final Grade:", txtFinal, };
 
 		int option = JOptionPane.showConfirmDialog(this, message, "Enter all student's properties",
 				JOptionPane.OK_CANCEL_OPTION);
