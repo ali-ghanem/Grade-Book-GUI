@@ -65,7 +65,7 @@ public class Chart extends JPanel {
 	 * will draw five rectangle for quiz1,quiz2,project,midterm,final,average and
 	 * the height of these rectangles will be set according to the averages of the
 	 * grades. I multiply the height by 6 to be bigger and clearer, but it will not
-	 * change the differences ratio between all the rectangles.
+	 * change the different ratios between all the rectangles.
 	 */
 	public void paint(Graphics g) {
 		super.paint(g);
@@ -77,7 +77,6 @@ public class Chart extends JPanel {
 		g.fillRect(560, 600 - midterm * 6, 30, midterm * 6);
 		g.fillRect(730, 600 - finall * 6, 30, finall * 6);
 		g.fillRect(900, 600 - average * 6, 30, average * 6);
-
 	}
 
 	public void getInfo(StudentsList stdList) {

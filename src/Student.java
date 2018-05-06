@@ -115,8 +115,7 @@ public class Student {
 	}
 
 	public double generateAverage() {
-		double average = (quiz1 + quiz2 + project + midtermGrade + finalGrade)
-				/ 5.0;
+		double average = (quiz1 + quiz2 + project + midtermGrade + finalGrade) / 5.0;
 		return (Math.round(average * 100) / 100.0);
 	}
 

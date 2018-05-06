@@ -39,15 +39,14 @@ public class MainFrame extends JFrame implements ActionListener {
 	private DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
 	private JMenuBar menus;
 	private JMenu menuStudent, menuSort, menuFilter, menuExit;
-	private JMenuItem mAdd, mAddRandom, mRemove, mRemoveAll, mSortLastName, mSortId, mSortAverage, mFilter,
-			mRemoveFilter, mSave, mExit;
+	private JMenuItem mAdd, mAddRandom, mReadStudentFile, mRemove, mRemoveAll, mSortLastName, mSortId, mSortAverage,
+			mFilter, mRemoveFilter, mHelp, mSave, mExit;
 
 	public MainFrame() {
 
 		stdList = new StudentsList();
 		chart = new Chart(stdList);
-		readData();
-		// getTableData();
+		readSavedData();
 
 		setLayout(new BorderLayout());
 
@@ -61,12 +60,14 @@ public class MainFrame extends JFrame implements ActionListener {
 		menuStudent = new JMenu("Student");
 		menuSort = new JMenu("Sort");
 		menuFilter = new JMenu("Filter");
-		menuExit = new JMenu("Exit");
+		menuExit = new JMenu("Help and exit");
 
 		mAdd = new JMenuItem("Add student");
 		mAdd.addActionListener(this);
-		mAddRandom = new JMenuItem("Add random student");
+		mAddRandom = new JMenuItem("Add random students");
 		mAddRandom.addActionListener(this);
+		mReadStudentFile = new JMenuItem("Read 'Student' file");
+		mReadStudentFile.addActionListener(this);
 		mRemove = new JMenuItem("Remove student");
 		mRemove.addActionListener(this);
 		mRemoveAll = new JMenuItem("Remove all students");
@@ -81,13 +82,16 @@ public class MainFrame extends JFrame implements ActionListener {
 		mFilter.addActionListener(this);
 		mRemoveFilter = new JMenuItem("Remove filter");
 		mRemoveFilter.addActionListener(this);
-		mSave = new JMenuItem("Save data and exit");
+		mHelp = new JMenuItem("Help");
+		mHelp.addActionListener(this);
+		mSave = new JMenuItem("Save and exit");
 		mSave.addActionListener(this);
 		mExit = new JMenuItem("Exit without saving");
 		mExit.addActionListener(this);
 
 		menuStudent.add(mAdd);
 		menuStudent.add(mAddRandom);
+		menuStudent.add(mReadStudentFile);
 		menuStudent.add(mRemove);
 		menuStudent.add(mRemoveAll);
 		menuSort.add(mSortLastName);
@@ -95,6 +99,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		menuSort.add(mSortAverage);
 		menuFilter.add(mFilter);
 		menuFilter.add(mRemoveFilter);
+		menuExit.add(mHelp);
 		menuExit.add(mSave);
 		menuExit.add(mExit);
 
@@ -139,7 +144,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		}
 	}
 
-	public void readData() {
+	public void readSavedData() {
 		try {
 			Scanner s = new Scanner(new File("savedData.txt"));
 			while (s.hasNext()) {
@@ -342,6 +347,17 @@ public class MainFrame extends JFrame implements ActionListener {
 		}
 	}
 
+	public void readStudentFile() {
+		stdList.readFile();
+		getTableData();
+		chart.getInfo(stdList);
+	}
+
+	public void showHelpMessage() {
+		String msg = "You can add students by clicking on Student -> Add Student then enter the properties of the student and click Ok.\nBefore you exit you need to save your data by clicking on Help and exit -> Save and exit.";
+		JOptionPane.showMessageDialog(this, msg);
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(mAdd)) {
@@ -350,6 +366,10 @@ public class MainFrame extends JFrame implements ActionListener {
 
 		else if (e.getSource().equals(mAddRandom)) {
 			addRandomStudent();
+		}
+
+		else if (e.getSource().equals(mReadStudentFile)) {
+			readStudentFile();
 		}
 
 		else if (e.getSource().equals(mRemove)) {
@@ -387,6 +407,10 @@ public class MainFrame extends JFrame implements ActionListener {
 		else if (e.getSource().equals(mSave)) {
 			saveData();
 			System.exit(0);
+		}
+
+		else if (e.getSource().equals(mHelp)) {
+			showHelpMessage();
 		}
 
 		else {

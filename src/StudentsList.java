@@ -119,7 +119,7 @@ public class StudentsList {
 	}
 
 	/**
-	 * readFile method for reading the "Student.txt" file which have 800 random
+	 * readFile method for reading the "Student.txt" file which has 800 random
 	 * students informations then it will add the students values to the array list.
 	 */
 	public void readFile() {
