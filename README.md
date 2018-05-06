@@ -1,7 +1,7 @@
 # Grade-Book-GUI
 Simple grade book program 
 
-# Random student generator criterias:
+# Random student generator criteria:
 
 Every student will have a first name, a last name, an ID, quiz 1, quiz 2, project, midterm and final grades, average and letter grade.
 
