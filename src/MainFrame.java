@@ -148,17 +148,19 @@ public class MainFrame extends JFrame implements ActionListener {
 		try {
 			Scanner s = new Scanner(new File("savedData.txt"));
 			while (s.hasNext()) {
+				String line = s.nextLine();
+				String[] lineElements = line.split(",");
 				Student st = new Student();
-				st.setFirstName(s.next());
-				st.setLastName(s.next());
-				st.setID(s.next());
-				st.setQuiz1(Double.parseDouble(s.next()));
-				st.setQuiz2(Double.parseDouble(s.next()));
-				st.setProject(Double.parseDouble(s.next()));
-				st.setMidterm(Double.parseDouble(s.next()));
-				st.setFinall(Double.parseDouble(s.next()));
-				st.setAverage(Double.parseDouble(s.next()));
-				st.setLetterGrade(s.next());
+				st.setFirstName(lineElements[0]);
+				st.setLastName(lineElements[1]);
+				st.setID(lineElements[2]);
+				st.setQuiz1(Double.parseDouble(lineElements[3]));
+				st.setQuiz2(Double.parseDouble(lineElements[4]));
+				st.setProject(Double.parseDouble(lineElements[5]));
+				st.setMidterm(Double.parseDouble(lineElements[6]));
+				st.setFinall(Double.parseDouble(lineElements[7]));
+				st.setAverage(Double.parseDouble(lineElements[8]));
+				st.setLetterGrade(lineElements[9]);
 				stdList.getList().add(st);
 
 			}
@@ -173,20 +175,22 @@ public class MainFrame extends JFrame implements ActionListener {
 
 	public void saveData() {
 		try {
-			PrintWriter wr = new PrintWriter(new FileOutputStream("savedData.txt"));
+			PrintWriter writer = new PrintWriter(new FileOutputStream("savedData.txt"));
 			for (int i = 0; i < stdList.getList().size(); i++) {
-				wr.print(stdList.getList().get(i).getFirstName() + " ");
-				wr.print(stdList.getList().get(i).getLastName() + " ");
-				wr.print(stdList.getList().get(i).getID() + " ");
-				wr.print(stdList.getList().get(i).getQuiz1() + " ");
-				wr.print(stdList.getList().get(i).getQuiz2() + " ");
-				wr.print(stdList.getList().get(i).getProject() + " ");
-				wr.print(stdList.getList().get(i).getMidterm() + " ");
-				wr.print(stdList.getList().get(i).getFinall() + " ");
-				wr.print(stdList.getList().get(i).getAverage() + " ");
-				wr.print(stdList.getList().get(i).getLetterGrade() + " ");
+				String firstName = stdList.getList().get(i).getFirstName();
+				String lastName = stdList.getList().get(i).getLastName();
+				String id = stdList.getList().get(i).getID();
+				double quiz1 = stdList.getList().get(i).getQuiz1();
+				double quiz2 = stdList.getList().get(i).getQuiz2();
+				double project = stdList.getList().get(i).getProject();
+				double midterm = stdList.getList().get(i).getMidterm();
+				double finalGrade = stdList.getList().get(i).getFinall();
+				double average = stdList.getList().get(i).getAverage();
+				String letterGrade = stdList.getList().get(i).getLetterGrade();
+				writer.print(firstName + "," + lastName + "," + id + "," + quiz1 + "," + quiz2 + "," + project + ","
+						+ midterm + "," + finalGrade + "," + average + "," + letterGrade + "\n");
 			}
-			wr.close();
+			writer.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

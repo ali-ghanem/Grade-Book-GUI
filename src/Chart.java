@@ -11,12 +11,7 @@ import javax.swing.JPanel;
 public class Chart extends JPanel {
 
 	// These variables represent the height of each rectangle:
-	private int quiz1 = 0;
-	private int quiz2 = 0;
-	private int project = 0;
-	private int midterm = 0;
-	private int finall = 0;
-	private int average = 0;
+	private int quiz1, quiz2, project, midterm, finall, average = 0;
 	private JLabel qu1, qu2, pro, mid, fin, avg;
 
 	public Chart(StudentsList stdList) {
