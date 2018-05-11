@@ -1,5 +1,5 @@
 # Grade-Book-GUI
-Simple grade book program 
+Simple grade book program with chart
 
 # Random student generator criteria:
 
